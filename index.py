@@ -4,11 +4,16 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-
-# import from folders/theme changer
-from app import *
 from dash_bootstrap_templates import ThemeSwitchAIO
 
+
+# ========= App ============== #
+FONT_AWESOME = ["https://use.fontawesome.com/releases/v5.10.2/css/all.css"]
+dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates@V1.0.4/dbc.min.css"
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY, dbc_css])
+app.scripts.config.serve_locally = True
+server = app.server
 
 # ========== Styles ============ #
 tab_card = {'height': '100%'}
@@ -24,6 +29,7 @@ main_config = {
                 "bgcolor": "rgba(0,0,0,0.5)"},
     "margin": {"l":0, "r":0, "t":10, "b":0}
 }
+
 
 template_theme1 = "flatly"
 template_theme2 = "vapor"
@@ -67,14 +73,13 @@ df_main.drop(['UNIDADE DE MEDIDA', 'COEF DE VARIAÇÃO REVENDA', 'COEF DE VARIA�
     'PRODUTO', 'PREÇO MÉDIO DISTRIBUIÇÃO'], inplace=True, axis=1)
 
 # To dict - para salvar no dcc.store
-df_store = df_main.to_dict()
-
+data = df_main.to_dict()
 
 # =========  Layout  =========== #
 app.layout = dbc.Container(children=[
     # Armazenamento de dataset
-    dcc.Store(id='dataset', data=df_store),
-    dcc.Store(id='dataset_fixed', data=df_store),
+    dcc.Store(id='dataset', data=data),
+    dcc.Store(id='dataset_fixed', data=data),
     dcc.Store(id='controller', data={'play': False}),
 
     # Layout
@@ -96,10 +101,10 @@ app.layout = dbc.Container(children=[
                             ThemeSwitchAIO(aio_id="theme", themes=[url_theme1, url_theme2]),
                             html.Legend("Asimov Academy")
                         ])
-                    ], style={'margin-top': '10px'}),
+                    ], style={'margin-top': '20px'}),
                     dbc.Row([
                         dbc.Button("Visite o Site", href="https://asimov.academy/", target="_blank")
-                    ], style={'margin-top': '10px'})
+                    ], style={'margin-top': '20px'})
                 ])
             ], style=tab_card)
         ], sm=4, lg=2),
@@ -152,8 +157,8 @@ app.layout = dbc.Container(children=[
             ], style=tab_card)
         ], sm=12, lg=7)
     ], className='main_row g-2 my-auto', style={'margin-top': '7px'}),
-    
-    # Row 2
+
+     # Row 2
     dbc.Row([
         dbc.Col([       
             dbc.Card([
@@ -169,7 +174,7 @@ app.layout = dbc.Container(children=[
                                 multi=True,
                                 options=[
                                     {"label": x, "value": x} for x in df_main.ESTADO.unique()
-                                ], style={'background-color': 'rgba(0, 0, 0, 0.3'}),
+                                ], style={'background-color': 'rgba(0, 0, 0, 0'}),
                         ], sm=10),
                     ]),
                     dcc.Graph(id='animation_graph', config={"displayModeBar": False, "showTips": False})
@@ -194,72 +199,72 @@ app.layout = dbc.Container(children=[
                         dbc.Col([
                             dcc.Dropdown(
                                 id="select_estado2",
-                                value=df_main.at[df_main.index[1],'ESTADO'],
+                                value=df_main.at[df_main.index[1], 'ESTADO'],
                                 clearable = False,
                                 options=[
                                     {"label": x, "value": x} for x in df_main.ESTADO.unique()
-                            ], style={'background-color': 'rgba(0, 0, 0, 0.3'}),
-                        ], sm=10, md=6),
-                    ], style={'margin-top': '20px'}, justify='center'),
-                    dcc.Graph(id='direct_comparison_graph', config={"displayModeBar": False, "showTips": False}),
-                    html.P(id='desc_comparison', style={'color': 'gray', 'font-size': '80%'}),
-                ])
-            ], style=tab_card)
-        ], sm=12, md=6, lg=4),
-        dbc.Col([
-            dbc.Row([
-                dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            dcc.Graph(id='card1_indicators', config={"displayModeBar": False, "showTips": False}, style={'margin-top': '30px'})
-                        ])
-                    ], style=tab_card)
-                ])
-            ], justify='center', style={'padding-bottom': '7px', 'height': '50%'}),
-            dbc.Row([
-                dbc.Col([
-                    dbc.Card([
-                        dbc.CardBody([
-                            dcc.Graph(id='card2_indicators', config={"displayModeBar": False, "showTips": False}, style={'margin-top': '30px'})
-                        ])
-                    ], style=tab_card)
-                ])
-            ], justify='center', style={'height': '50%'})
-        ], sm=12, lg=3, style={'height': '100%'})
-    ], justify='center', className='main_row g-2 my-auto'),
-
-    # Row 3 - RangeSlider
-    dbc.Row([
-        dbc.Col([
-            dbc.Card([                
+                                ], style = {'background-color': 'rgba(0,0,0,0.3'}),
+                            ], sm=10, md=6),
+                            ], style={'margin-top': '20px'}, justify='center'),
+                            dcc.Graph(id='direct_comparison_graph', config={"displayModeBar": False, "showTips": False}),
+                            html.P(id='desc_comparison', style={'color': 'gray', 'font-size': '80%'}),
+                    ])
+                ], style = tab_card)
+            ], sm=12, md=6, lg=4),
+            dbc.Col([
                 dbc.Row([
                     dbc.Col([
-                        dbc.Button([html.I(className='fa fa-play')], id="play-button", style={'margin-right': '15px'}),  
-                        dbc.Button([html.I(className='fa fa-stop')], id="stop-button")
-                    ], sm=12, md=1, style={'justify-content': 'center', 'margin-top': '10px'}),
+                        dbc.Card([
+                            dbc.CardBody([
+                                dcc.Graph(id='card1_indicators', config={"displayModeBar": False, "showTips": False}, style={'margin-top': '30px'})
+                            ])
+                        ], style=tab_card)
+                    ])
+                ], justify='center', style={'padding-bottom': '7px', 'height': '50%'}),
+                dbc.Row([
                     dbc.Col([
-                        dcc.RangeSlider(
-                            id='rangeslider',
-                            marks= {int(x): f'{x}' for x in df_main['ANO'].unique()},
-                            step=3,                
-                            min=2004,
-                            max=2021,
-                            value=[2004,2021],   
-                            dots=True,             
-                            pushable=3,
-                            tooltip={'always_visible':False, 'placement':'bottom'},
-                        )
-                    ], sm=12, md=10, style={'margin-top': '15px'}),
-                    # componente invisivel
-                    dcc.Interval(id='interval', interval=2000),
-                ], className='g-1', style={'height': '20%', 'justify-content': 'center'})
-                
-            ], style=tab_card)
-        ])
-    ], className='main_row g-2 my-auto')
-
+                        dbc.Card([
+                            dbc.CardBody([
+                                dcc.Graph(id='card2_indicators', config={"displayModeBar": False, "showTips": False}, style={'margin-top': '30px'})
+                            ])
+                        ], style=tab_card)
+                    ])
+                ], justify='center', style={'height': '50%'})
+            ], sm=12, lg=3, style={'height': '100%'})
+        ], justify='center', className='main_row g-2 my-auto'),
+        
+        
+        #  Row 3 - RangeSlider
+        dbc.Row([
+            dbc.Col([
+                dbc.Card([                
+                    dbc.Row([
+                        dbc.Col([
+                            dbc.Button([html.I(className='fa fa-play')], id="play-button", style={'margin-right': '15px'}),  
+                            dbc.Button([html.I(className='fa fa-stop')], id="stop-button")
+                        ], sm=12, md=1, style={'justify-content': 'center', 'margin-top': '10px'}),
+                        dbc.Col([
+                            dcc.RangeSlider(
+                                id='rangeslider',
+                                marks= {int(x): f'{x}' for x in df_main['ANO'].unique()},
+                                step=3,
+                                min=2004,
+                                max=2021,
+                                value=[2004,2021],
+                                dots=True,
+                                pushable=3,
+                                tooltip={'always_visible': False, 'placement': 'bottom'},
+                            )
+                        ], sm=12, md=10, style={'margin-top': '15px'}),
+                        # componente invisivel
+                        dcc.Interval(id='interval', interval=10000),
+                    ], className='g-1', style={'height': '20%', 'justify-content': 'center'})
+                ], style = tab_card)
+              ])
+        ], className='main_row g-2 my-auto')
+        
+                             
 ], fluid=True, style={'height': '100%'})
-
 
 # ======== Callbacks ========== #
 # Maximos e minimos
@@ -281,7 +286,7 @@ def func(data, toggle):
     fig = px.line(final_df, x=final_df.index, y=final_df.columns, template=template)
     
     # updates
-    fig.update_layout(main_config, height=150, xaxis_title=None, yaxis_title=None)
+    fig.update_layout(main_config, height=300, xaxis_title=None, yaxis_title=None)
 
     return fig
 
@@ -332,8 +337,8 @@ def graph1(data, ano, regiao, toggle):
     ))
 
     #fig1.update_xaxes(autorange='reversed') - explicar por que isso não funciona
-    fig1.update_layout(main_config, yaxis={'showticklabels':False}, height=140, template=template)
-    fig2.update_layout(main_config, yaxis={'showticklabels':False}, height=140, template=template)
+    fig1.update_layout(main_config, yaxis={'showticklabels':False}, height=300, template=template)
+    fig2.update_layout(main_config, yaxis={'showticklabels':False}, height=300, template=template)
 
     # range
     fig1.update_layout(xaxis_range=[dff_regiao['VALOR REVENDA (R$/L)'].max(), dff_regiao['VALOR REVENDA (R$/L)'].min() - 0.15])
@@ -379,14 +384,11 @@ def func(data, est1, est2, toggle):
     df2 = dff[dff.ESTADO.isin([est2])]
     df_final = pd.DataFrame()
     
-    df_estado1 = df1.groupby(pd.PeriodIndex(df1['DATA'], freq="M"))['VALOR REVENDA (R$/L)'].mean().reset_index()
-    df_estado2 = df2.groupby(pd.PeriodIndex(df2['DATA'], freq="M"))['VALOR REVENDA (R$/L)'].mean().reset_index()
+    df_estado1 = df1.groupby(['DATA'])['VALOR REVENDA (R$/L)'].mean().reset_index()
+    df_estado2 = df2.groupby(['DATA'])['VALOR REVENDA (R$/L)'].mean().reset_index()
 
-    df_estado1['DATA'] = pd.PeriodIndex(df_estado1['DATA'], freq="M")
-    df_estado2['DATA'] = pd.PeriodIndex(df_estado2['DATA'], freq="M")
-
-    df_final['DATA'] = df_estado1['DATA'].astype('datetime64[ns]')
-    df_final['VALOR REVENDA (R$/L)'] = df_estado1['VALOR REVENDA (R$/L)']-df_estado2['VALOR REVENDA (R$/L)']
+    df_final['DATA'] = df_estado1['DATA']
+    df_final['VALOR REVENDA (R$/L)'] = df_estado1['VALOR REVENDA (R$/L)'] - df_estado2['VALOR REVENDA (R$/L)']
     
     fig = go.Figure()
     # Toda linha
@@ -530,4 +532,4 @@ def controller(n_intervals, play, stop, rangeslider, controller):
 
 # Run server
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
